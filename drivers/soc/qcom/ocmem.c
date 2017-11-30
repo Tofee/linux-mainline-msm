@@ -338,14 +338,10 @@ static int ocmem_dev_probe(struct platform_device *pdev)
 		return ret;
 	}
 
-	if (qcom_scm_restore_sec_cfg_available()) {
-		dev_dbg(dev, "configuring scm\n");
-		ret = qcom_scm_restore_sec_cfg(QCOM_SCM_OCMEM_DEV_ID, 0);
-		if (ret) {
-			dev_err(dev, "Could not enable secure configuration\n");
-			goto err_clk_disable;
-		}
-	}
+	dev_dbg(dev, "configuring scm\n");
+	ret = qcom_scm_restore_sec_cfg(5, 0);
+	if (ret)
+		goto err_clk_disable;
 
 	reg = ocmem_read(ocmem, OCMEM_REG_HW_PROFILE);
 	ocmem->num_ports = OCMEM_HW_PROFILE_NUM_PORTS(reg);
