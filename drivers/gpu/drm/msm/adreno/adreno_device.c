@@ -271,7 +271,8 @@ static int find_chipid(struct device *dev, struct adreno_rev *rev)
 	if (ret == 0) {
 		unsigned int r, patch;
 
-		if (sscanf(compat, "qcom,adreno-%u.%u", &r, &patch) == 2) {
+		if (sscanf(compat, "qcom,adreno-%u.%u", &r, &patch) == 2 ||
+		    sscanf(compat, "amd,imageon-%u.%u", &r, &patch) == 2) {
 			rev->core = r / 100;
 			r %= 100;
 			rev->major = r / 10;
@@ -358,7 +359,27 @@ static const struct component_ops a3xx_ops = {
 
 static int adreno_probe(struct platform_device *pdev)
 {
-	return component_add(&pdev->dev, &a3xx_ops);
+	struct platform_device_info dummy_info = {
+		.parent = NULL,
+		.name = "msm",
+		.id = -1,
+		.res = NULL,
+		.num_res = 0,
+		.data = NULL,
+		.size_data = 0,
+		.dma_mask = ~0,
+	};
+	int ret;
+
+	ret = component_add(&pdev->dev, &a3xx_ops);
+	if (ret)
+		return ret;
+
+	/* create dummy msm device for imx5 gpu */
+	if (of_device_is_compatible(pdev->dev.of_node, "amd,imageon"))
+		platform_device_register_full(&dummy_info);
+
+	return 0;
 }
 
 static int adreno_remove(struct platform_device *pdev)
@@ -370,6 +391,8 @@ static int adreno_remove(struct platform_device *pdev)
 static const struct of_device_id dt_match[] = {
 	{ .compatible = "qcom,adreno" },
 	{ .compatible = "qcom,adreno-3xx" },
+	/* for compatibility with imx5 gpu: */
+	{ .compatible = "amd,imageon" },
 	/* for backwards compat w/ downstream kgsl DT files: */
 	{ .compatible = "qcom,kgsl-3d0" },
 	{}

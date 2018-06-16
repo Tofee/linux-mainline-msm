@@ -507,17 +507,11 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
 		priv->kms = kms;
 		break;
 	default:
-		kms = ERR_PTR(-ENODEV);
+		kms = NULL;
 		break;
 	}
 
 	if (IS_ERR(kms)) {
-		/*
-		 * NOTE: once we have GPU support, having no kms should not
-		 * be considered fatal.. ideally we would still support gpu
-		 * and (for example) use dmabuf/prime to share buffers with
-		 * imx drm driver on iMX5
-		 */
 		dev_err(dev, "failed to load kms\n");
 		ret = PTR_ERR(kms);
 		priv->kms = NULL;
@@ -634,7 +628,7 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
 	drm_mode_config_reset(ddev);
 
 #ifdef CONFIG_DRM_FBDEV_EMULATION
-	if (fbdev)
+	if (kms && fbdev)
 		priv->fbdev = msm_fbdev_init(ddev);
 #endif
 
@@ -1272,6 +1266,7 @@ static int add_display_components(struct device *dev,
 static const struct of_device_id msm_gpu_match[] = {
 	{ .compatible = "qcom,adreno" },
 	{ .compatible = "qcom,adreno-3xx" },
+	{ .compatible = "amd,imageon" },
 	{ .compatible = "qcom,kgsl-3d0" },
 	{ },
 };
@@ -1316,9 +1311,11 @@ static int msm_pdev_probe(struct platform_device *pdev)
 	struct component_match *match = NULL;
 	int ret;
 
-	ret = add_display_components(&pdev->dev, &match);
-	if (ret)
-		return ret;
+	if (get_mdp_ver(pdev)) {
+		ret = add_display_components(&pdev->dev, &match);
+		if (ret)
+			return ret;
+	}
 
 	ret = add_gpu_components(&pdev->dev, &match);
 	if (ret)
