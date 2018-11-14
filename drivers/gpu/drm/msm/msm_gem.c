@@ -914,7 +914,7 @@ static struct drm_gem_object *_msm_gem_new(struct drm_device *dev,
 
 	if (!iommu_present(&platform_bus_type))
 		use_vram = true;
-	else if ((flags & MSM_BO_STOLEN) && priv->vram.size)
+	else if ((flags & (MSM_BO_STOLEN | MSM_BO_SCANOUT)) && priv->vram.size)
 		use_vram = true;
 
 	printk("_msm_gem_new %u bytes use_vram=%u\n", size, use_vram);
