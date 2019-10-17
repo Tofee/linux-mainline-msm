@@ -819,7 +819,7 @@
 		compatible = "qcom,msm_sps";
 		reg = <0xf9984000 0x15000>,
 		      <0xf9999000 0xb000>;
-		interrupts = <0 94 0>;
+		interrupts = <GIC_SPI 94 IRQ_TYPE_EDGE_RISING>;
 
 		qcom,bam-dma-res-pipes = <6>;
 	};
@@ -830,7 +830,7 @@
 		reg = <0xfe12f000 0x35000>,
 		      <0xfe104000 0x20000>;
 		reg-names = "slimbus_physical", "slimbus_bam_physical";
-		interrupts = <0 163 0 0 164 0>;
+		interrupts = <GIC_SPI 163 IRQ_TYPE_EDGE_RISING GIC_SPI 164 IRQ_TYPE_EDGE_RISING>;
 		interrupt-names = "slimbus_irq", "slimbus_bam_irq";
 
 		wcd_codec: taiko_codec {
@@ -923,16 +923,16 @@
 			"csi_clk_mux",
 			"vfe0",
 			"vfe1";
-		interrupts = <GIC_SPI 78 0>,
-			<GIC_SPI 79 0>,
-			<GIC_SPI 80 0>,
-			<GIC_SPI 51 0>,
-			<GIC_SPI 52 0>,
-			<GIC_SPI 53 0>,
-			<GIC_SPI 54 0>,
-			<GIC_SPI 55 0>,
-			<GIC_SPI 57 0>,
-			<GIC_SPI 58 0>;
+		interrupts = <GIC_SPI 78 IRQ_TYPE_EDGE_RISING>,
+			<GIC_SPI 79 IRQ_TYPE_EDGE_RISING>,
+			<GIC_SPI 80 IRQ_TYPE_EDGE_RISING>,
+			<GIC_SPI 51 IRQ_TYPE_EDGE_RISING>,
+			<GIC_SPI 52 IRQ_TYPE_EDGE_RISING>,
+			<GIC_SPI 53 IRQ_TYPE_EDGE_RISING>,
+			<GIC_SPI 54 IRQ_TYPE_EDGE_RISING>,
+			<GIC_SPI 55 IRQ_TYPE_EDGE_RISING>,
+			<GIC_SPI 57 IRQ_TYPE_EDGE_RISING>,
+			<GIC_SPI 58 IRQ_TYPE_EDGE_RISING>;
 		interrupt-names = "csiphy0",
 			"csiphy1",
 			"csiphy2",

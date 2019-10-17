@@ -277,11 +277,11 @@
 		      <0xfc820000 0x020>;
 		reg-names = "qdsp6", "rmb";
 
-		interrupts-extended = <&intc 0 24 1>,
-				      <&modem_smp2p_in 0 0>,
-				      <&modem_smp2p_in 1 0>,
-				      <&modem_smp2p_in 2 0>,
-				      <&modem_smp2p_in 3 0>;
+		interrupts-extended = <&intc GIC_SPI 24 IRQ_TYPE_EDGE_RISING>,
+				      <&modem_smp2p_in 0 IRQ_TYPE_EDGE_RISING>,
+				      <&modem_smp2p_in 1 IRQ_TYPE_EDGE_RISING>,
+				      <&modem_smp2p_in 2 IRQ_TYPE_EDGE_RISING>,
+				      <&modem_smp2p_in 3 IRQ_TYPE_EDGE_RISING>;
 		interrupt-names = "wdog",
 				  "fatal",
 				  "ready",
@@ -661,7 +661,7 @@
 		blsp2_uart10: serial@f9960000 {
 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
 			reg = <0xf9960000 0x1000>;
-			interrupts = <0 116 0x0>;
+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
 			clocks = <&gcc GCC_BLSP2_UART4_APPS_CLK>, <&gcc GCC_BLSP2_AHB_CLK>;
 			clock-names = "core", "iface";
 			status = "disabled";
