@@ -271,6 +271,9 @@
 		qcom,smem-state-names = "stop";
 	};
 
+	sound_card: audio {
+	};
+
 	modem-rproc@fc880000 {
 		compatible = "qcom,msm8974-mss-pil";
 		reg = <0xfc880000 0x100>,
@@ -1354,36 +1357,42 @@
 			apr {
 				compatible = "qcom,apr-v2";
 				qcom,smd-channels = "apr_audio_svc";
-				qcom,apr-dest-domain-id = <APR_DOMAIN_ADSP>;
+				reg = <APR_DOMAIN_ADSP>;
+				#address-cells = <1>;
+				#size-cells = <0>;
 
 				q6core {
-					qcom,apr-svc-name = "CORE";
-					qcom,apr-svc-id = <APR_SVC_ADSP_CORE>;
 					compatible = "qcom,q6core";
+					reg = <APR_SVC_ADSP_CORE>;
 				};
 
 				q6afe: q6afe {
 					compatible = "qcom,q6afe";
-					qcom,apr-svc-name = "AFE";
-					qcom,apr-svc-id = <APR_SVC_AFE>;
-					#sound-dai-cells = <1>;
+					reg = <APR_SVC_AFE>;
+					q6afedai: dais {
+						compatible = "qcom,q6afe-dais";
+						#sound-dai-cells = <1>;
+						#address-cells = <1>;
+						#size-cells = <0>;
+					};
 				};
 
 				q6asm: q6asm {
 					compatible = "qcom,q6asm";
-					qcom,apr-svc-name = "ASM";
-					qcom,apr-svc-id = <APR_SVC_ASM>;
-					#sound-dai-cells = <1>;
+					reg = <APR_SVC_ASM>;
+					q6asmdai: dais {
+						compatible = "qcom,q6asm-dais";
+						#sound-dai-cells = <1>;
+					};
 				};
 
 				q6adm: q6adm {
 					compatible = "qcom,q6adm";
-					qcom,apr-svc-name = "ADM";
-					qcom,apr-svc-id = <APR_SVC_ADM>;
-					#sound-dai-cells = <0>;
-				};
-
-				sound_card: audio {
+					reg = <APR_SVC_ADM>;
+					q6routing: routing {
+						compatible = "qcom,q6adm-routing";
+						#sound-dai-cells = <0>;
+					};
 				};
 			};
 		};

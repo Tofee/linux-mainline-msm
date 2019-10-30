@@ -842,7 +842,8 @@
 
 			qcom,cdc-slim-ifd = "taiko-slim-ifd";
 			qcom,cdc-slim-ifd-elemental-addr = [00 00 A0 00 17 02];
-
+						#address-cells = <1>;
+						#size-cells = <0>;
 			qcom,gpio-int2 = <&msmgpio 72 0>;
 			qcom,clk1-gpio = <&pm8941_gpios 15 0>;
 
@@ -1302,27 +1303,23 @@
 
 &sound_card {
 	compatible	= "qcom,apq8096-sndcard";
-	qcom,model = "DB820c";
+	model = "DB820c";
 
-	fe@1 {
-		is-fe;
+	mm1-dai-link {
 		link-name = "MultiMedia1 Playback";
 		cpu {
-			sound-dai = <&q6asm MSM_FRONTEND_DAI_MULTIMEDIA1>;
-		};
-		platform {
-			sound-dai = <&q6asm MSM_FRONTEND_DAI_MULTIMEDIA1>;
+			sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
 		};
 	};
 
-	be@1 {
+	slim-dai-link {
 		link-name = "Slimbus Playback";
 		cpu {
-			sound-dai = <&q6afe SLIMBUS_0_RX>;
+			sound-dai = <&q6afedai SLIMBUS_0_RX>;
 		};
 
 		platform {
-			sound-dai = <&q6adm>;
+			sound-dai = <&q6routing>;
 		};
 
 		codec {
