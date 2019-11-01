@@ -3937,11 +3937,17 @@ int snd_soc_of_get_dai_link_codecs(struct device *dev,
 						 "#sound-dai-cells",
 						 index, &args);
 		if (ret)
+		{
+			dev_err(dev, "snd_soc_of_get_dai_link_codecs: Couldn't parse phandle for index %d\n", index);
 			goto err;
+		}
 		component->of_node = args.np;
 		ret = snd_soc_get_dai_name(&args, &component->dai_name);
 		if (ret < 0)
+		{
+			dev_err(dev, "snd_soc_of_get_dai_link_codecs: Couldn't get codec dai name for index %d\n", index);
 			goto err;
+		}
 	}
 	return 0;
 err:
