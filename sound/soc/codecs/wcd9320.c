@@ -510,8 +510,11 @@ static int slim_tx_mixer_put(struct snd_kcontrol *kc,
 static int wcd9320_put_dec_enum(struct snd_kcontrol *kc,
 				struct snd_ctl_elem_value *ucontrol)
 {
-	struct snd_soc_dapm_context *dapm = snd_soc_dapm_kcontrol_dapm(kc);
+	printk("wcd9320_put_dec_enum kc->private_data=%x\n", kc->private_data);
+
+    struct snd_soc_dapm_context *dapm = snd_soc_dapm_kcontrol_dapm(kc);
 	struct snd_soc_component *component = snd_soc_dapm_to_component(dapm);
+
 	unsigned int val, reg, sel;
 
 	val = ucontrol->value.enumerated.item[0];
@@ -520,8 +523,7 @@ static int wcd9320_put_dec_enum(struct snd_kcontrol *kc,
 	{
 		unsigned decimator;
 
-		struct snd_soc_dapm_widget_list *wlist = snd_kcontrol_chip(kc);
-		struct snd_soc_dapm_widget *w = wlist->widgets[0];
+		struct snd_soc_dapm_widget *w = snd_soc_dapm_kcontrol_widget(kc);
 
 		if (w->name[4] == ' ')
 			decimator = w->name[3] - '0';
@@ -632,12 +634,14 @@ static int taiko_get_anc_func(struct snd_kcontrol *kc, struct snd_ctl_elem_value
 	return 0;
 }
 
+
 static int taiko_put_anc_func(struct snd_kcontrol *kc, struct snd_ctl_elem_value *ucontrol)
 {
-	printk("taiko_put_anc_func\n");
+	struct snd_soc_component *component = snd_soc_kcontrol_component(kc);
+	struct wcd9320_codec *wcd = dev_get_drvdata(component->dev);
+	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
 
-	struct snd_soc_dapm_context *dapm = snd_soc_dapm_kcontrol_dapm(kc);
-	struct wcd9320_codec *wcd = dev_get_drvdata(dapm->dev);
+	printk("taiko_put_anc_func component=%x dapm=%x\n", component, dapm);
 
 	wcd->anc_func = ucontrol->value.integer.value[0];
 
@@ -3900,9 +3904,6 @@ static int wcd9320_slim_probe(struct slim_device *slim)
 	int ret;
 
 	/* Interface device */
-	if (slim->e_addr.dev_index == WCD9320_SLIM_INTERFACE_DEVICE_INDEX)
-		return 0;
-
 	wcd = devm_kzalloc(dev, sizeof(*wcd), GFP_KERNEL);
 	if (!wcd)
 		return	-ENOMEM;
@@ -3931,9 +3932,6 @@ static int wcd9320_slim_status(struct slim_device *sdev,
 	int ret;
 
 	printk("status: %u dev_index=%u\n", status, sdev->e_addr.dev_index);
-
-	if (sdev->e_addr.dev_index == WCD9320_SLIM_INTERFACE_DEVICE_INDEX)
-		return 0;
 
 	wcd = dev_get_drvdata(&sdev->dev);
 
@@ -3980,7 +3978,6 @@ static int wcd9320_slim_status(struct slim_device *sdev,
 
 static const struct slim_device_id wcd9320_slim_id[] = {
 	{SLIM_MANF_ID_QCOM, SLIM_PROD_CODE_WCD9320, 0x1, 0x0},
-	{SLIM_MANF_ID_QCOM, SLIM_PROD_CODE_WCD9320, 0x0, 0x0},
 	{}
 };
 MODULE_DEVICE_TABLE(slim, wcd9320_slim_id);
